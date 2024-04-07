@@ -17,22 +17,21 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> _login(String email, String password) async {
     try {
-    final AuthResponse res = await supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-    user = res.user;
-    if (!mounted) return;
-    context.replace('/afterLoginLayout');
-    } on AuthException catch (e){
+      final AuthResponse res = await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      user = res.user;
+      if (!mounted) return;
+      context.replace('/afterLoginLayout');
+    } on AuthException catch (e) {
+      print(e.message);
       if (e.message == 'Invalid login credentials') {
-        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Email atau password salah'),
           ),
         );
-      
       }
     }
   }
@@ -77,9 +76,11 @@ class LoginPageState extends State<LoginPage> {
                     String email = _emailController.text;
                     String password = _passwordController.text;
                     _login(email, password);
-                    if (user != null) {
-                      context.go('/sampahDibuang');
-                    }
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (user != null) {
+                        context.go('/sampahDibuang');
+                      }
+                    });
                   },
                   child: const Text('Login'),
                 ),

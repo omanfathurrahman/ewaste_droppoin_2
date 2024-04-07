@@ -24,20 +24,30 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> _register(String nama, String email, String password) async {
-    final res = await supabase.auth.signUp(
-      email: email,
-      password: password,
-    );
-    await supabase.from("profile_droppoin").insert({
-      "nama": nama,
-      "email": email,
-      "droppoin_id": droppoinId,
-      "user_id": res.user!.id
-    });
-    await supabase.auth.signOut();
-    if (!mounted) return;
-    
-    context.go('/login');
+    try {
+      final res = await supabase.auth.signUp(
+        email: email,
+        password: password,
+      );
+      print(res);
+      await supabase.from("profile_droppoin").insert({
+        "nama": nama,
+        "email": email,
+        "droppoin_id": droppoinId,
+        "user_id": res.user!.id
+      });
+      await supabase.auth.signOut();
+      if (!mounted) return;
+
+      context.go('/login');
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
 
   @override
